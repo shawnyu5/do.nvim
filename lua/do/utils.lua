@@ -1,5 +1,6 @@
-local state = require("do.state").state
 local M = {}
+local state = require('do.state').state
+local view = require('do.view')
 
 function M.is_white_space(str)
   return str:gsub("%s", "") == ""
@@ -18,18 +19,17 @@ function M.memoize(f)
   return table
 end
 
-local memo_store = {}
-setmetatable(memo_store, {__mode = "v"})  -- make values weak
-function M.memo_random(table, seed)
-  local key = seed or math.random(#table)
-
-  if memo_store[key] then
-    return memo_store[key]
-  else
-    local newcolor = table[math.random(#table)]
-    memo_store[key] = newcolor
-    return newcolor
-  end
+--- Redraw winbar depending on if there are tasks. Redraw if there are pending tasks, other wise set to ""
+function M.redraw_winbar()
+   if vim.fn.win_gettype() == "" and vim.bo.buftype ~= "prompt" then
+      -- if there are tasks, make winbar visible
+      if state.tasks:count() > 0 then
+         vim.wo.winbar = view.stl
+      else
+         -- other wise hide it
+         vim.wo.winbar = ""
+      end
+   end
 end
 
 --- execute the auto command when a task is modified

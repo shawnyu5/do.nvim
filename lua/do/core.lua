@@ -1,3 +1,4 @@
+local C = {}
 local kaomoji = require("do.kaomojis")
 local view = require('do.view')
 local edit = require('do.edit')
@@ -5,9 +6,7 @@ local store = require('do.store')
 local state = require('do.state').state
 local default_opts = require('do.state').default_opts
 local utils = require('do.utils')
-local C = {}
 
--- local augroup = vim.api.nvim_create_augroup("do_nvim", { clear = true })
 
 ---Show a message for the duration of `options.message_timeout`
 ---@param str string Text to display
@@ -25,9 +24,11 @@ end
 ---@param to_front boolean whether to add task to front of list
 function C.add(str, to_front)
   state.tasks:add(str, to_front)
+  utils.redraw_winbar()
   utils.exec_task_modified_autocmd()
 end
 
+--- Finish the first task
 function C.done()
   if state.tasks:count() == 0 then
     C.show_message(kaomoji.confused() .. " There was nothing left to do…", "InfoMsg")
@@ -42,9 +43,11 @@ function C.done()
   else
     C.show_message(kaomoji.joy() .. " Great! Only " .. state.tasks:count() .. " to go.", "MoreMsg")
   end
+  utils.redraw_winbar()
    utils.exec_task_modified_autocmd()
 end
 
+--- Edit the tasks in a floating window
 function C.edit()
   edit.toggle_edit(state.tasks:get(), function(new_todos)
     state.tasks:set(new_todos)
@@ -52,18 +55,17 @@ function C.edit()
   end)
 end
 
+--- save the tasks
 function C.save()
   state.tasks:sync(true)
+  utils.redraw_winbar()
 end
 
 ---@param opts DoOptions
 function C.setup(opts)
   state.options = vim.tbl_deep_extend("force", default_opts, opts or {})
   state.tasks = store.init(state.options.store)
-
-  state.auGroupId = vim.api.nvim_create_augroup("do_nvim", {
-     clear = true,
-  })
+  state.auGroupID = vim.api.nvim_create_augroup("do_nvim", { clear = true })
 
   -- vim.api.nvim_create_autocmd({ "User" }, {
      -- group = state.auGroupId,
@@ -81,28 +83,31 @@ function C.setup(opts)
   return C
 end
 
+--- configure displaying current to do item in winbar
 function C.setup_winbar()
-  vim.o.winbar = view.stl
+  -- vim.o.winbar = view.stl
+  utils.redraw_winbar()
+  vim.o.winbar = nil
   vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
-    group = state.auGroupId,
+    group = state.auGroupID,
     callback = function()
-      if vim.fn.win_gettype() == "" and vim.bo.buftype ~= "prompt" then
-        vim.wo.winbar = view.stl
-      end
+       utils.redraw_winbar()
     end
   })
 
+  -- winbar should not be displayed in windows the cursor is not in
   vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
-    group = state.auGroupId,
+    group = state.auGroupID,
     callback = function()
-      if vim.fn.win_gettype() == "" and vim.bo.buftype ~= "prompt" then
-        vim.wo.winbar = view.stl_nc
-      end
+       vim.wo.winbar = ""
     end
   })
 end
 
+--- toggle the visibility of the winbar
 function C.toggle()
+   -- disable winbar completely when not visible
+   vim.wo.winbar = vim.wo.winbar == "" and view.stl or ""
   state.view_enabled = not state.view_enabled
 end
 

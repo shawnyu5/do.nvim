@@ -1,6 +1,9 @@
-local kaomojis = require("do.kaomojis")
 local View = {}
+local kaomojis = require("do.kaomojis")
 
+--- Weather the winbar should visible, when view_enabled is true, and there are items in the list
+---@param state DoState
+---@return boolean
 function View.is_visible(state)
   return state.view_enabled and state.tasks:has_items()
 end

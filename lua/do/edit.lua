@@ -1,4 +1,3 @@
-local state = require("do.state").state
 local utils = require("do.utils")
 -- print("core:", vim.inspect(core)) -- __AUTO_GENERATED_PRINT_VAR__
 local global_win = nil
@@ -13,7 +12,7 @@ local function open_float()
   local win = vim.api.nvim_open_win(bufnr, true, {
     relative = "editor",
     border = "rounded",
-    noautocmd = true,
+    noautocmd = false,
     col = vim.opt.columns:get()/2 - width/2,
     row = vim.opt.lines:get()/2 - height/2,
     width = width,
@@ -75,10 +74,9 @@ function M.toggle_edit(tasks, cb)
     M.close(cb)
   end, { buffer = global_buf })
 
-  -- local group = vim.api.nvim_create_augroup("do_nvim", { clear = true })
-
+  -- event after tasks from pop up has been written to
   vim.api.nvim_create_autocmd("BufWriteCmd", {
-    group = state.auGroupId,
+    group = state.state.auGroupID,
     buffer = global_buf,
     callback = function()
        local new_todos = get_buf_tasks()
@@ -87,7 +85,7 @@ function M.toggle_edit(tasks, cb)
   })
 
   vim.api.nvim_create_autocmd("BufModifiedSet", {
-    group = state.auGroupId,
+    group = state.state.auGroupID,
     buffer = global_buf,
     callback = function()
       vim.api.nvim_buf_set_option(global_buf, "modified", false)
