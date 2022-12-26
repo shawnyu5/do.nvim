@@ -23,15 +23,11 @@ A tiny task manager within nvim that helps you stay on track.
 
 ## Rationale
 
-While coding, we often need to do several things that depend on another.
-And it's quite easy to loose track of what we initially set out to do in the first place, which is also know as [Yak Shaving](https://en.wiktionary.org/wiki/yak_shaving).
-_Or_ we just have a list of tasks that we want to work off step by step.
+While coding, we often need to do several things that depend on another. And it's quite easy to loose track of what we initially set out to do in the first place, which is also know as [Yak Shaving](https://en.wiktionary.org/wiki/yak_shaving). _Or_ we just have a list of tasks that we want to work off step by step.
 
 This plugin provides a few simple commands to help you stay on track.
 
-It manages a list of things and always shows you the first item.
-It provides you with some commands to add things to it, without leaving context.
-And it uses a simple, intuitive floating buffer to manage that list.
+It manages a list of things and always shows you the first item. It provides you with some commands to add things to it, without leaving context. And it uses a simple, intuitive floating buffer to manage that list.
 
 ## Usage
 
@@ -44,9 +40,7 @@ And it uses a simple, intuitive floating buffer to manage that list.
 
 ## Installation
 
--  Requires Neovim 0.8. Mostly because I haven't tested with anything below.
-   At least recommended, because the winbar is ideal for this, which is a 0.8
-   feature.
+-  Requires Neovim 0.8. Mostly because I haven't tested with anything below. At least recommended, because the winbar is ideal for this, which is a 0.8 feature.
 
 ```lua
 -- use the package manager of your choice, eg. packer
@@ -63,13 +57,15 @@ require("do").setup({
     auto_create_file = false, -- automatically create a .do_tasks when calling :Do
     file_name = ".do_tasks",
   }
+  disabled_ft = {
+    "yaml",
+  }
 })
 ```
 
 ## Winbar
 
-This plugin felt best to me using the winbar - which is a new feature in
-neovim 0.8. In order to use it, simply set `use_winbar` to true:
+This plugin felt best to me using the winbar - which is a new feature in neovim 0.8. In order to use it, simply set `use_winbar` to true:
 
 ```lua
 require('do').setup({
@@ -79,8 +75,7 @@ require('do').setup({
 
 ## Lualine
 
-In case you'd rather use it in the statusline or tabbar, you can use the exposed
-views to do so. For example with lualine:
+In case you'd rather use it in the statusline or tabbar, you can use the exposed views to do so. For example with lualine:
 
 ```lua
 require('lualine').setup {
@@ -116,8 +111,7 @@ vim.api.nvim_create_autocmd({ "User" }, {
 
 🚧 There are none yet. Keeping this for future reference.
 
-Running tests requires [plenary.nvim][plenary] to be checked out in the parent directory of _this_ repository.
-You can then run:
+Running tests requires [plenary.nvim][plenary] to be checked out in the parent directory of _this_ repository. You can then run:
 
 ```bash
 nvim --headless --noplugin -u tests/minimal.vim -c "PlenaryBustedDirectory tests/ {minimal_init = 'tests/minimal.vim'}"

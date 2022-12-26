@@ -15,29 +15,8 @@
 --
 -- A tiny task manager that helps you stay on track.
 --
-local create = vim.api.nvim_create_user_command
-local state = require('do.state').state
-local kaomoji = require("do.kaomojis")
-local core = require('do.core')
+local core = require("do.core")
 
 _G.DoStatusline = core.view
-
-create("Do", function(args)
-  core.add(args.args, args.bang)
-end, { nargs = 1, bang = true })
-
-create("Done", function(args)
-  -- not sure if I like this.
-  if not args.bang then
-    core.show_message(kaomoji.doubt() .. " Really? If so, use `Done!`", "ErrorMsg")
-    return
-  end
-
-  core.done()
-end, { bang = true })
-
-create("DoToggle", core.toggle, {})
-create("DoEdit", core.edit, {})
-create("DoSave", core.save, { bang = true })
 
 return core
