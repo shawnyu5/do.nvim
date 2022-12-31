@@ -138,7 +138,7 @@ function C.shouldDisablePlugin()
 			local ft = vim.opt.filetype:get()
 			-- if this is a filetype we disable, then delete the autocmds set by this plugin
 			if vim.tbl_contains(state.options.disabled_ft, ft) then
-				vim.api.nvim_del_autocmd(state.auGroupID)
+				-- vim.api.nvim_del_autocmd(state.auGroupID)
 				C.delete_user_commands()
 			end
 		end,
